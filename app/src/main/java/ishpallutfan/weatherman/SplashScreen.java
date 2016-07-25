@@ -51,7 +51,39 @@ public class SplashScreen extends Activity {
                         nT.setTextColor(ColorStateList.valueOf(Color.parseColor("#E0F7FA")));
                         //Intent intent = new Intent(SplashScreen.this, MainActivity.class);
                         //startActivity(intent);
-                        }
+
+                        TextView texVar= (TextView) findViewById(R.id.yesText);
+                        TextView texVar2= (TextView) findViewById(R.id.noText);
+
+                        texVar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                // to pass the age to the next activity
+                                boolean isRaining = true;
+                                Intent intentBundle1 = new Intent(v.getContext(), MainActivity.class);
+                                Bundle bundle1 = new Bundle();
+                                bundle1.putBoolean("isRaining", isRaining);
+                                intentBundle1.putExtras(bundle1);
+                                startActivity(intentBundle1);
+
+                            }
+                        });
+
+                        texVar2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                boolean isRaining = false;
+
+                                // to pass the age to the next activity
+                                Intent intentBundle2 = new Intent(v.getContext(), MainActivity.class);
+                                Bundle bundle2 = new Bundle();
+                                bundle2.putBoolean("isRaining", isRaining);
+                                intentBundle2.putExtras(bundle2);
+                                startActivity(intentBundle2);
+                            }
+                        });
+                      }
                     });
 
                 }
@@ -59,33 +91,6 @@ public class SplashScreen extends Activity {
         };
         timerThread.start();
         //timerThread.interrupt();
-    }
-
-
-    public void onClick(View v){
-        Toast.makeText(this,"hi", Toast.LENGTH_SHORT).show();
-        switch (v.getId()) {
-            case R.id.yesButton:
-                boolean isRaining = true;
-
-                // to pass the age to the next activity
-                Intent intentBundle1 = new Intent(this, MainActivity.class);
-                Bundle bundle1 = new Bundle();
-                bundle1.putBoolean("isRaining", isRaining);
-                intentBundle1.putExtras(bundle1);
-                startActivity(intentBundle1);
-
-
-            case R.id.noButton:
-                isRaining = true;
-
-                // to pass the age to the next activity
-                Intent intentBundle2 = new Intent(this, MainActivity.class);
-                Bundle bundle2 = new Bundle();
-                bundle2.putBoolean("isRaining", isRaining);
-                intentBundle2.putExtras(bundle2);
-                startActivity(intentBundle2);
-        }
     }
 
     @Override

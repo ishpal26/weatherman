@@ -53,25 +53,4 @@
         android:textColor="#0097A7"
         android:clickable="true" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="YES"
-        android:id="@+id/yesButton"
-        android:layout_below="@+id/yesText"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_alignStart="@+id/textView2"
-        android:layout_marginLeft="29dp"
-        android:layout_marginStart="29dp" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="NO"
-        android:id="@+id/noButton"
-        android:layout_alignTop="@+id/yesButton"
-        android:layout_toRightOf="@+id/noText"
-        android:layout_toEndOf="@+id/noText" />
 </RelativeLayout>
