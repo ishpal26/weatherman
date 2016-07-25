@@ -1,7 +1,9 @@
 package ishpallutfan.weatherman;
 
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -11,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,10 +39,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-
         Intent intentExtras = getIntent();
         Bundle extraBundle = intentExtras.getExtras();
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -100,7 +110,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Add a marker in Sydney and move the camera
         LatLng singapore = new LatLng(1.31940861, 103.90500269);
         mMap.addMarker(new MarkerOptions().position(singapore).title("Marker in SG"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(singapore));
+        float zoomLevel = (float)11.0;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, zoomLevel));
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
