@@ -61,7 +61,7 @@ public class SplashScreen extends Activity {
 
                                 // to pass the age to the next activity
                                 boolean isRaining = true;
-                                Intent intentBundle1 = new Intent(v.getContext(), MainActivity.class);
+                                Intent intentBundle1 = new Intent(v.getContext(), MapsActivity.class);
                                 Bundle bundle1 = new Bundle();
                                 bundle1.putBoolean("isRaining", isRaining);
                                 intentBundle1.putExtras(bundle1);
@@ -76,7 +76,7 @@ public class SplashScreen extends Activity {
                                 boolean isRaining = false;
 
                                 // to pass the age to the next activity
-                                Intent intentBundle2 = new Intent(v.getContext(), MainActivity.class);
+                                Intent intentBundle2 = new Intent(v.getContext(), MapsActivity.class);
                                 Bundle bundle2 = new Bundle();
                                 bundle2.putBoolean("isRaining", isRaining);
                                 intentBundle2.putExtras(bundle2);
