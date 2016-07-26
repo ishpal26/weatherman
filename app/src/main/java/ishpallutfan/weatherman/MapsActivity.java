@@ -94,25 +94,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         return super.onOptionsItemSelected(item);
     }
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera. In this case,
-         * we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to install
-         * it inside the SupportMapFragment. This method will only be triggered once the user has
-         * installed Google Play services and returned to the app.
-         */
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng singapore = new LatLng(1.31940861, 103.90500269);
-        mMap.addMarker(new MarkerOptions().position(singapore).title("Marker in SG"));
-        float zoomLevel = (float)11.0;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, zoomLevel));
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -135,5 +117,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        /*mMap = googleMap;
+        // Add a marker in Sydney and move the camera
+        LatLng singapore = new LatLng(1.31940861, 103.90500269);
+        mMap.addMarker(new MarkerOptions().position(singapore).title("Marker in SG"));
+        float zoomLevel = (float)11.0;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, zoomLevel));
+        */
+
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng singapore = new LatLng(1.31940861, 103.90500269);
+        mMap.addMarker(new MarkerOptions().position(singapore).title("Current location"));
+        float zoomLevel = (float)11.0;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, zoomLevel));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(singapore));
     }
 }
