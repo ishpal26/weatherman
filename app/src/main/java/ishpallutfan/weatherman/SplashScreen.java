@@ -12,20 +12,33 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.graphics.Typeface;
 import android.widget.Toast;
 
 public class SplashScreen extends Activity {
 
     String tentative = "test";
     Thread timerThread;
+    TextView t2, yT, nT;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
-        final TextView t2 = (TextView) findViewById(R.id.textView2);
-        final TextView yT = (TextView) findViewById(R.id.yesText);
-        final TextView nT = (TextView) findViewById(R.id.noText);
+
+        t2 = (TextView) findViewById(R.id.textView2);
+        yT = (TextView) findViewById(R.id.yesText);
+        nT = (TextView) findViewById(R.id.noText);
+
+        /*Typeface myCustomFont = Typeface.createFromAsset(getAssets(), "Fonts/Roboto-ThinItalic.ttf");
+        t2.setTypeface(myCustomFont);
+        Typeface myCustomFont1 = Typeface.createFromAsset(getAssets(), "Fonts/Roboto-ThinItalic.ttf");
+        yT.setTypeface(myCustomFont1);
+        Typeface myCustomFont2 = Typeface.createFromAsset(getAssets(), "Fonts/Roboto-ThinItalic.ttf");
+        nT.setTypeface(myCustomFont2);*/
 
         //This portion makes the fonts nice
         /*t =  (TextView) findViewById(R.id.header);
