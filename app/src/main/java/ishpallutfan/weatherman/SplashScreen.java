@@ -33,12 +33,12 @@ public class SplashScreen extends Activity {
         yT = (TextView) findViewById(R.id.yesText);
         nT = (TextView) findViewById(R.id.noText);
 
-        /*Typeface myCustomFont = Typeface.createFromAsset(getAssets(), "Fonts/Roboto-ThinItalic.ttf");
+        Typeface myCustomFont = Typeface.createFromAsset(getAssets(), "fonts/Roboto-ThinItalic.ttf");
         t2.setTypeface(myCustomFont);
-        Typeface myCustomFont1 = Typeface.createFromAsset(getAssets(), "Fonts/Roboto-ThinItalic.ttf");
+        Typeface myCustomFont1 = Typeface.createFromAsset(getAssets(), "fonts/Roboto-ThinItalic.ttf");
         yT.setTypeface(myCustomFont1);
-        Typeface myCustomFont2 = Typeface.createFromAsset(getAssets(), "Fonts/Roboto-ThinItalic.ttf");
-        nT.setTypeface(myCustomFont2);*/
+        Typeface myCustomFont2 = Typeface.createFromAsset(getAssets(), "fonts/Roboto-ThinItalic.ttf");
+        nT.setTypeface(myCustomFont2);
 
         //This portion makes the fonts nice
         /*t =  (TextView) findViewById(R.id.header);
