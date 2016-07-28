@@ -53,6 +53,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
+
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -147,36 +150,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        Toast.makeText(this, "OnMapReady set up!" , Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "OnMapReady set up!" , Toast.LENGTH_LONG).show();
 
 
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Toast.makeText(this, "Surpasses first condition" , Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Surpasses first condition" , Toast.LENGTH_LONG).show();
             if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
                 mMap.setMyLocationEnabled(true);
-                Toast.makeText(this, "api client created! 1" , Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "api client created! 1" , Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this, "request granted!" , Toast.LENGTH_LONG).show();
-                requestPermissions(new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION }, 1340);
-                if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    buildGoogleApiClient();
-                    mMap.setMyLocationEnabled(true);
-                }
+               // Toast.makeText(this, "request granted!" , Toast.LENGTH_LONG).show();
+                requestPermissions(new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSIONS_REQUEST_LOCATION);
             }
         }
 
         else {
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
-            Toast.makeText(this, "api client created! 2" , Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "api client created! 2" , Toast.LENGTH_LONG).show();
         }
         /*// Add a marker in Sydney and move the camera
         LatLng singapore = new LatLng(1.31940861, 103.90500269);
@@ -230,13 +231,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Toast.makeText(this, "Connection Suspended" , Toast.LENGTH_LONG).show();
     }
 
 
     @Override
     public void onLocationChanged(Location location) {
 
+        Toast.makeText(this, "Location Changed" , Toast.LENGTH_LONG).show();
         mLastLocation = location;
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
@@ -263,11 +265,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        Toast.makeText(this, "Connection Failed" , Toast.LENGTH_LONG).show();
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public boolean checkLocationPermission(){
+
+        Toast.makeText(this, "Check Location Permission" , Toast.LENGTH_LONG).show();
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -298,8 +302,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
+        Toast.makeText(this, "On request Permission Result" , Toast.LENGTH_LONG).show();
+        if(mGoogleApiClient == null) {
+            Toast.makeText(this, "There is no API client" , Toast.LENGTH_LONG).show();
+        }
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
+                Toast.makeText(this, "request code is MY_PERMISSIONS_REQUEST" , Toast.LENGTH_LONG).show();
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -312,6 +321,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         if (mGoogleApiClient == null) {
                             buildGoogleApiClient();
+                            mMap.setMyLocationEnabled(true);
+
+                            Toast.makeText(this, "Just built Google Api Client" , Toast.LENGTH_LONG).show();
+
                         }
                         mMap.setMyLocationEnabled(true);
                     }
@@ -319,7 +332,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } else {
 
                     // Permission denied, Disable the functionality that depends on this permission.
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Location services denied. \nPlease re-open app to continue.", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
@@ -327,6 +340,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // other 'case' lines to check for other permissions this app might request.
             // You can add here other case statements according to your requirement.
         }
+    }
+
+    public void moveMap() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+        //Place current location marker
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Position");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        mCurrLocationMarker = mMap.addMarker(markerOptions);
+
+        //move map camera
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
     }
 
 }
