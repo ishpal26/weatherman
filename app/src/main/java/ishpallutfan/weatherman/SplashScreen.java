@@ -4,6 +4,8 @@ package ishpallutfan.weatherman;
  * Created by Ishpal on 3/6/2016.
  */
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -11,6 +13,10 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.graphics.Typeface;
 import android.widget.Toast;
@@ -19,7 +25,8 @@ public class SplashScreen extends Activity {
 
     String tentative = "test";
     Thread timerThread;
-    TextView t2, yT, nT;
+    TextView t2, yT, nT, tv;
+    ImageView logo;
 
 
 
@@ -32,6 +39,8 @@ public class SplashScreen extends Activity {
         t2 = (TextView) findViewById(R.id.textView2);
         yT = (TextView) findViewById(R.id.yesText);
         nT = (TextView) findViewById(R.id.noText);
+        tv = (TextView) findViewById(R.id.textView);
+        logo = (ImageView) findViewById(R.id.imageView2);
 
         Typeface myCustomFont = Typeface.createFromAsset(getAssets(), "fonts/Roboto-ThinItalic.ttf");
         t2.setTypeface(myCustomFont);
@@ -59,9 +68,36 @@ public class SplashScreen extends Activity {
                     @Override
                     public void run() {
                         //Toast.makeText(this,"hi", Toast.LENGTH_SHORT).show();
-                        t2.setTextColor(ColorStateList.valueOf(Color.parseColor("#E0F7FA")));
+
+
+                        ObjectAnimator translateLogo = ObjectAnimator.ofFloat(logo, "translationY", -80);
+                        /*ObjectAnimator translatet2 = ObjectAnimator.ofFloat(t2, "translationY", -100);
+                        ObjectAnimator translateyT = ObjectAnimator.ofFloat(yT, "translationY", -100);
+                        ObjectAnimator translatenT = ObjectAnimator.ofFloat(nT, "translationY", -100);*/
+
+                        Animation fadeIn = new AlphaAnimation(0, 1);
+                        fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
+                        fadeIn.setDuration(1000);
+                        //fadeIn.setStartOffset(1000);
+
+                        t2.setVisibility(View.VISIBLE);
+                        yT.setVisibility(View.VISIBLE);
+                        nT.setVisibility(View.VISIBLE);
+                        tv.setVisibility(View.VISIBLE);
+
+                        /*translatet2.start();
+                        translateyT.start();
+                        translatenT.start();*/
+                        translateLogo.start();
+                        t2.startAnimation(fadeIn);
+                        yT.startAnimation(fadeIn);
+                        nT.startAnimation(fadeIn);
+                        tv.startAnimation(fadeIn);
+
+                        /*t2.setTextColor(ColorStateList.valueOf(Color.parseColor("#E0F7FA")));
                         yT.setTextColor(ColorStateList.valueOf(Color.parseColor("#E0F7FA")));
-                        nT.setTextColor(ColorStateList.valueOf(Color.parseColor("#E0F7FA")));
+                        nT.setTextColor(ColorStateList.valueOf(Color.parseColor("#E0F7FA")));*/
+
                         //Intent intent = new Intent(SplashScreen.this, MainActivity.class);
                         //startActivity(intent);
 
@@ -73,6 +109,7 @@ public class SplashScreen extends Activity {
                             public void onClick(View v) {
 
                                 // to pass the age to the next activity
+                                yT.setTextColor(ColorStateList.valueOf(Color.parseColor("#FFCC80")));
                                 boolean isRaining = true;
                                 Intent intentBundle1 = new Intent(v.getContext(), MapsActivity.class);
                                 Bundle bundle1 = new Bundle();
@@ -86,8 +123,9 @@ public class SplashScreen extends Activity {
                         texVar2.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                boolean isRaining = false;
 
+                                nT.setTextColor(ColorStateList.valueOf(Color.parseColor("#FFCC80")));
+                                boolean isRaining = false;
                                 // to pass the age to the next activity
                                 Intent intentBundle2 = new Intent(v.getContext(), MapsActivity.class);
                                 Bundle bundle2 = new Bundle();

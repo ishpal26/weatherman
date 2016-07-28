@@ -10,25 +10,26 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Is it raining where you are?"
         android:id="@+id/textView2"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="132dp"
+        android:layout_marginBottom="145dp"
         android:textColor="#E0F7FA"
-        android:textSize="30dp" />
+        android:textSize="30dp"
+        android:visibility="invisible"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="yes   |"
+        android:text="yes"
         android:id="@+id/yesText"
-        android:layout_marginTop="51dp"
+        android:layout_marginTop="475dp"
         android:textColor="#E0F7FA"
         android:clickable="true"
         android:textSize="20dp"
         android:layout_marginLeft="57dp"
         android:layout_marginStart="123dp"
-        android:layout_below="@+id/imageView2"
+        android:visibility="invisible"
         android:layout_alignStart="@+id/textView2" />
 
     <TextView
@@ -37,21 +38,32 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="no"
         android:id="@+id/noText"
-        android:layout_alignBottom="@+id/yesText"
-        android:layout_toRightOf="@+id/yesText"
-        android:layout_toEndOf="@+id/yesText"
         android:layout_marginLeft="13dp"
         android:layout_marginStart="13dp"
         android:textColor="#E0F7FA"
         android:clickable="true"
-        android:textSize="20dp" />
+        android:textSize="20dp"
+        android:visibility="invisible"
+        android:layout_alignTop="@+id/textView"
+        android:layout_toEndOf="@+id/textView" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageView2"
         android:src="@drawable/dropwithoutbg"
-        android:layout_above="@+id/textView2"
-        android:layout_alignParentRight="true" />
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="|"
+        android:id="@+id/textView"
+        android:layout_alignTop="@+id/yesText"
+        android:layout_centerHorizontal="true"
+        android:textColor="#E0F7FA"
+        android:visibility="invisible" />
 
 </RelativeLayout>
