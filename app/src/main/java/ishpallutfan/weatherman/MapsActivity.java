@@ -1,10 +1,14 @@
 package ishpallutfan.weatherman;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -15,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -171,6 +176,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             } else {
                // Toast.makeText(this, "request granted!" , Toast.LENGTH_LONG).show();
                 requestPermissions(new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSIONS_REQUEST_LOCATION);
+                mMap.setMyLocationEnabled(true); // just added
             }
         }
 
@@ -179,13 +185,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.setMyLocationEnabled(true);
             //Toast.makeText(this, "api client created! 2" , Toast.LENGTH_LONG).show();
         }
-        /*// Add a marker in Sydney and move the camera
-        LatLng singapore = new LatLng(1.31940861, 103.90500269);
-        mMap.addMarker(new MarkerOptions().position(singapore).title("Current location"));
-        float zoomLevel = (float)11.0;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, zoomLevel));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(singapore));
-        */
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -213,6 +212,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        // if location is not turned on by the user
+        if(location == null){
+
+        }
+
+
 
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());

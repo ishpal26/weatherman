@@ -7,11 +7,16 @@ package ishpallutfan.weatherman;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -142,6 +147,36 @@ public class SplashScreen extends Activity {
         };
         timerThread.start();
         //timerThread.interrupt();
+
+
+        isLocationEnabled();
+        if(!isLocationEnabled()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
+            builder.setTitle("Unable to connect to Location Services ")
+                    .setMessage("Turn on Location Services?")
+                    .setPositiveButton("Yes",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                }
+                            });
+
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
+
+    }
+
+
+    protected boolean isLocationEnabled() {
+        String le = Context.LOCATION_SERVICE;
+        LocationManager locationManager = (LocationManager) getSystemService(le);
+        if (!locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @Override
