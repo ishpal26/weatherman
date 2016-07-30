@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">>
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/North_Text"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="North" />
+            android:title="North"/>
         <item
             android:id="@+id/South_Text"
             android:icon="@drawable/ic_menu_slideshow"
