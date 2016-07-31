@@ -28,6 +28,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -42,6 +46,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -52,6 +63,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     Location mLastLocation;
     Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
+    Bundle extraBundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +79,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         Intent intentExtras = getIntent();
-        Bundle extraBundle = intentExtras.getExtras();
+        extraBundle = intentExtras.getExtras();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -217,8 +229,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
 
-
-
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
@@ -231,6 +241,42 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
+        // create entry if raining
+        if(extraBundle.getBoolean("isRaining") == true) {
+            double lat = location.getLatitude();
+            double lon = location.getLongitude();
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy-HH:mm");
+            Calendar calobj = Calendar.getInstance();
+            System.out.println(df.format(calobj.getTime()));
+            String DandT = df.format(calobj.getTime()).toString();
+            String[] arr = DandT.split("-");
+            String date = arr[0];
+            String time = arr[1];
+
+            Response.Listener<String> responseListener = new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        System.out.println("LELELELELELELELELELELELELELEL");
+                        JSONObject jsonObject = new JSONObject(response);
+                        boolean success = jsonObject.getBoolean("success");
+
+                        if (success == true)
+                            System.out.print("great success");
+                        else
+                            System.out.print("failed");
+
+                    } catch (JSONException e) {
+
+                    }
+                }
+            };
+
+            RainingRequest req = new RainingRequest(1, lat, lon, date, time, responseListener);
+            RequestQueue queue = Volley.newRequestQueue(MapsActivity.this);
+            queue.add(req);
+        }
     }
 
 

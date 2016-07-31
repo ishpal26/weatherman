@@ -14,15 +14,15 @@ public class RainingRequest extends StringRequest {
     private static final String RAIN_REQUEST_URL = "http://lidapplcations.comxa.com/addEntry.php";
     private Map<String, String> params;
 
-    public RainingRequest (String latitude, String longtitude, String date, String time, boolean isRaining, Response.Listener<String> listener) {
+    public RainingRequest (int isRaining, double latitude, double longtitude, String date, String time, Response.Listener<String> listener) {
         super(Method.POST, RAIN_REQUEST_URL, listener, null);
 
         params = new HashMap<>();
-        params.put("latitude", latitude);
-        params.put("longtitude", longtitude);
+        params.put("isRaining", isRaining + "");
+        params.put("latitude", latitude + "");
+        params.put("longtitude", longtitude + "");
         params.put("onDate", date);
         params.put("atTime", time);
-        params.put("isRaining", isRaining + "");
     }
 
     @Override
