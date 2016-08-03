@@ -258,7 +258,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 @Override
                 public void onResponse(String response) {
                     try {
-                        System.out.println("LELELELELELELELELELELELELELEL");
                         JSONObject jsonObject = new JSONObject(response);
                         boolean success = jsonObject.getBoolean("success");
 
@@ -268,7 +267,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             System.out.print("failed");
 
                     } catch (JSONException e) {
-
+                        e.printStackTrace();
                     }
                 }
             };

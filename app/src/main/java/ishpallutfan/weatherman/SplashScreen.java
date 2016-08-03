@@ -14,6 +14,8 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
@@ -148,8 +150,26 @@ public class SplashScreen extends Activity {
         timerThread.start();
         //timerThread.interrupt();
 
+        if(!isWifiDataEnabled()){
+            AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
+            builder.setTitle("Unable to connect to the Internet")
+                    .setMessage("Turn on Mobile Data/Wifi")
+                    .setPositiveButton("Yes",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    startActivity(new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS));
+                                }
+                            });
 
-        isLocationEnabled();
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+        try {
+            timerThread.sleep(2000);
+        } catch (InterruptedException e){
+            System.out.println("interrupted exception");
+        }
+
         if(!isLocationEnabled()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
             builder.setTitle("Unable to connect to Location Services ")
@@ -172,12 +192,22 @@ public class SplashScreen extends Activity {
     protected boolean isLocationEnabled() {
         String le = Context.LOCATION_SERVICE;
         LocationManager locationManager = (LocationManager) getSystemService(le);
-        if (!locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+        return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+
+    protected boolean isWifiDataEnabled(){
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = cm.getActiveNetworkInfo();
+        if(info == null)
             return false;
-        } else {
+        if (info.getType() == ConnectivityManager.TYPE_WIFI ||info.getType() == ConnectivityManager.TYPE_MOBILE ) {
             return true;
+        } else {
+            return false;
         }
     }
+
 
     @Override
     protected void onPause() {
