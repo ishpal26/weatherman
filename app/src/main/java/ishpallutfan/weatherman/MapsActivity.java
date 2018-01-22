@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -28,10 +29,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.android.volley.VolleyError;
 import com.google.android.gms.analytics.HitBuilders;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -48,6 +52,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -62,9 +71,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
+    Marker currentRainMarker;
     LocationRequest mLocationRequest;
     Bundle extraBundle;
+    private static final String URL_PRODUCTS = "http://lidapplications.000webhostapp.com/retrieve.php";
 
+    //Creates the map, initializes the toolbar, fab, drawer, navigation view
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,10 +110,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        Toast.makeText(this, "isRaining = " +extraBundle.getBoolean("isRaining") , Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "isRaining = " +extraBundle.getBoolean("isRaining") , Toast.LENGTH_LONG).show();
     }
 
-
+    //App drawer behavior
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -119,6 +131,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return true;
     }
 
+    //Item selected behaviour
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -135,6 +148,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
+    //Navigation bar behaviour
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -168,34 +182,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      * installed Google Play services and returned to the app.
      */
 
-
+    //Builds the Google maps
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        //Toast.makeText(this, "OnMapReady set up!" , Toast.LENGTH_LONG).show();
-
-
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //Toast.makeText(this, "Surpasses first condition" , Toast.LENGTH_LONG).show();
             if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
                 mMap.setMyLocationEnabled(true);
-                //Toast.makeText(this, "api client created! 1" , Toast.LENGTH_LONG).show();
             } else {
-               // Toast.makeText(this, "request granted!" , Toast.LENGTH_LONG).show();
                 requestPermissions(new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSIONS_REQUEST_LOCATION);
-                mMap.setMyLocationEnabled(true); // just added
+                mMap.setMyLocationEnabled(true);
             }
         }
 
         else {
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
-            //Toast.makeText(this, "api client created! 2" , Toast.LENGTH_LONG).show();
         }
     }
 
@@ -208,11 +215,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mGoogleApiClient.connect();
     }
 
-
+    //Get the current position
+    //Add the marker
+    //Moves the camera to current location
+    //Inserts the weather data
     @Override
     public void onConnected(Bundle bundle) {
 
-        Toast.makeText(this, "Connected!" , Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Connected!" , Toast.LENGTH_LONG).show();
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
@@ -240,6 +250,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+
 
         // create entry if raining
         if(extraBundle.getBoolean("isRaining") == true) {
@@ -272,23 +283,93 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             };
 
+
+            //Should we put this in the splash screen?
             RainingRequest req = new RainingRequest(1, lat, lon, date, time, responseListener);
             RequestQueue queue = Volley.newRequestQueue(MapsActivity.this);
-            queue.add(req);
+            if(extraBundle.getBoolean("isRaining")) {
+                queue.add(req);
+            }
+
         }
+
+        int count = 0;
+        final List<Data> weatherData = new ArrayList<Data>();
+        Toast.makeText(this, "after weatherData", Toast.LENGTH_LONG).show();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL_PRODUCTS,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(MapsActivity.this, "response = " + response, Toast.LENGTH_LONG).show();
+                        while(true) {if(response != null) break;}
+                        try {
+                            //converting the string to json array object
+                            JSONArray array = new JSONArray(response);
+
+                            Toast.makeText(MapsActivity.this, "array.length = " + array.length(), Toast.LENGTH_LONG).show();
+
+                            //traversing through all the object
+                            for (int i = 0; i < array.length(); i++) {
+                                //getting product object from json array
+                                JSONObject data = array.getJSONObject(i);
+
+                                double currentLatitude = Double.parseDouble(data.getString("latitude"));
+                                double currentLongtitude = Double.parseDouble(data.getString("longtitude"));
+                                MarkerOptions currentRain = new MarkerOptions();
+                                currentRain.position(new LatLng(currentLatitude, currentLongtitude));
+                                currentRain.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                                currentRainMarker = mMap.addMarker(currentRain);
+
+                                //adding the product to product list
+                                /*weatherData.add(new Data(
+                                        data.getInt("id"),
+                                        data.getString("time"),
+                                        data.getString("latitude"),
+                                        data.getString("longtitude")
+                                ));*/
+
+                            }
+
+                            //creating adapter object and setting it to recyclerview
+                            //ProductsAdapter adapter = new ProductsAdapter(MainActivity.this, productList);
+                            //recyclerView.setAdapter(adapter);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        //adding our stringrequest to queue
+        Volley.newRequestQueue(this).add(stringRequest);
+
+        /*for(Data currentData : weatherData) {
+            double currentLatitude = Double.parseDouble(currentData.getLatitude());
+            double currentLongtitude = Double.parseDouble(currentData.getLongtitude());
+            Toast.makeText(this, "currentLong = " + currentLongtitude , Toast.LENGTH_LONG).show();
+            MarkerOptions currentRain = new MarkerOptions();
+            currentRain.position(new LatLng(currentLatitude, currentLongtitude));
+            currentRain.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+            currentRainMarker = mMap.addMarker(currentRain);
+        }*/
     }
 
 
     @Override
     public void onConnectionSuspended(int i) {
-        Toast.makeText(this, "Connection Suspended" , Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Connection Suspended" , Toast.LENGTH_LONG).show();
     }
 
 
     @Override
     public void onLocationChanged(Location location) {
 
-        Toast.makeText(this, "Location Changed" , Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Location Changed" , Toast.LENGTH_LONG).show();
         mLastLocation = location;
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
@@ -315,13 +396,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(this, "Connection Failed" , Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Connection Failed" , Toast.LENGTH_LONG).show();
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public boolean checkLocationPermission(){
 
-        Toast.makeText(this, "Check Location Permission" , Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Check Location Permission" , Toast.LENGTH_LONG).show();
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -352,13 +433,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-        Toast.makeText(this, "On request Permission Result" , Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "On request Permission Result" , Toast.LENGTH_LONG).show();
         if(mGoogleApiClient == null) {
-            Toast.makeText(this, "There is no API client" , Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "There is no API client" , Toast.LENGTH_LONG).show();
         }
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
-                Toast.makeText(this, "request code is MY_PERMISSIONS_REQUEST" , Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "request code is MY_PERMISSIONS_REQUEST" , Toast.LENGTH_LONG).show();
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -373,7 +454,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             buildGoogleApiClient();
                             mMap.setMyLocationEnabled(true);
 
-                            Toast.makeText(this, "Just built Google Api Client" , Toast.LENGTH_LONG).show();
+                            //Toast.makeText(this, "Just built Google Api Client" , Toast.LENGTH_LONG).show();
 
                         }
                         mMap.setMyLocationEnabled(true);
@@ -382,7 +463,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } else {
 
                     // Permission denied, Disable the functionality that depends on this permission.
-                    Toast.makeText(this, "Location services denied. \nPlease re-open app to continue.", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(this, "Location services denied. \nPlease re-open app to continue.", Toast.LENGTH_LONG).show();
                 }
                 return;
             }

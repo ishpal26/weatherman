@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by Lutfan on 29/7/2016.
  */
 public class RainingRequest extends StringRequest {
-    private static final String RAIN_REQUEST_URL = "http://lidapplcations.comxa.com/addEntry.php";
+    private static final String RAIN_REQUEST_URL = "http://lidapplications.000webhostapp.com/test.php";
     private Map<String, String> params;
 
     public RainingRequest (int isRaining, double latitude, double longtitude, String date, String time, Response.Listener<String> listener) {
