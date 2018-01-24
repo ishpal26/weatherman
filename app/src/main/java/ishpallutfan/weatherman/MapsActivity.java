@@ -75,7 +75,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     Marker currentRainMarker;
     LocationRequest mLocationRequest;
     Bundle extraBundle;
+    Location location;
+    FloatingActionButton fab;
+
     private static final String URL_PRODUCTS = "http://lidapplications.000webhostapp.com/retrieve.php";
+    private static final int ZOOM_INDEX = 12;
 
     //Creates the map, initializes the toolbar, fab, drawer, navigation view
     @Override
@@ -83,7 +87,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-
 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -94,14 +97,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Intent intentExtras = getIntent();
         extraBundle = intentExtras.getExtras();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        fab = (FloatingActionButton) findViewById(R.id.fab);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -236,7 +232,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
 
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         // if location is not turned on by the user
         if(location == null){
 
@@ -252,7 +248,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(ZOOM_INDEX));
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                moveMap();
+            }
+        });
 
 
         // create entry if raining
@@ -290,9 +293,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             //Should we put this in the splash screen?
             RainingRequest req = new RainingRequest(1, lat, lon, date, time, responseListener);
             RequestQueue queue = Volley.newRequestQueue(MapsActivity.this);
-            if(extraBundle.getBoolean("isRaining")) {
-                queue.add(req);
-            }
+            queue.add(req);
 
         }
 
@@ -388,7 +389,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(ZOOM_INDEX));
 
         //stop location updates
         if (mGoogleApiClient != null) {
@@ -491,15 +492,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        mCurrLocationMarker = mMap.addMarker(markerOptions);
-
-        //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(ZOOM_INDEX)); //11
     }
 
 }
